@@ -4,7 +4,7 @@ name: Clang Conan
 on: [push]
 
 env:
-  SINTEF_REFERENCE: "qualisys-cpp-sdk*"
+  SINTEF_REFERENCE: "qualisys_cpp_sdk*"
   CONAN_UPLOAD: ${{ secrets.CONAN_URL }}
   CONAN_PASSWORD_SINTEF: ${{ secrets.CONAN_PASSWORD }}
   CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.CONAN_USER }}
