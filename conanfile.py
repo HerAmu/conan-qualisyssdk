@@ -45,7 +45,7 @@ class QualisysCppSDKConan(ConanFile):
     def package_info(self):
         self.cpp_info.name = 'qualisys_cpp_sdk'
         lib = "qualisys_cpp_sdk"
-        if self.settings.build_type == "Debug":
+        if self.settings.build_type = "Debug":
             lib += "-d"
-        self.cpp_info.libs = lib
+        self.cpp_info.libs = [lib]
         self.cpp_info.includedirs.extend(["include/qualisys_cpp_sdk"])
