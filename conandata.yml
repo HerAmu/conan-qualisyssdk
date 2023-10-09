@@ -1,0 +1,4 @@
+sources:
+  "1.23.0":
+    url: "https://github.com/qualisys/qualisys_cpp_sdk/archive/refs/tags/rt_protocol_1.23.tar.gz"
+    sha256: "b770f2004125b082783db4db04a3cab54688807f4c1d63fb1eb79a7fa5a33c02"

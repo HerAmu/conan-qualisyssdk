@@ -1,51 +1,53 @@
-from conans import ConanFile, CMake, tools
-from conans.model.version import Version
+from os.path import join
+from conan import ConanFile
+from conan.tools.files import get, copy
+from conan.tools.files import replace_in_file, rmdir
+from conan.tools.cmake import CMake, cmake_layout
+from conan.tools.scm import Git
+from conan.tools.env import Environment
+
+required_conan_version = ">=1.53.0"
 
 
 class QualisysCppSDKConan(ConanFile):
     name = "qualisys_cpp_sdk"
-    version = "1.23"
     license = "MIT"
     author = "SINTEF Ocean"
-    url = "https://github.com/qualisys/qualisys_cpp_sdk"
-    homepage = "https://www.qualisys.com/"
+    url = "https://github.com/sintef-ocean/conan-qualisys-cpp-sdk"
+    homepage = "https://github.com/qualisys/qualisys_cpp_sdk"
     description = "C++ library to interface with Qualisys motion capture systen in real-time"
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake", "cmake_find_package"
+    package_type = "static-library"
+    generators = "CMakeToolchain"
 
-    scm = {
-        "type": "git",
-        "url": "https://github.com/qualisys/qualisys_cpp_sdk",
-        "revision": "rt_protocol_{}".format(version),
-        }
+    def layout(self):
+        cmake_layout(self, src_folder="src")
 
-    def configure_cmake(self):
-        cmake = CMake(self)
-        cmake.configure()
-        return cmake
+    def source(self):
+        get(self, **self.conan_data["sources"][self.version], strip_root=True)
+
+        replace_in_file(self, join(self.source_folder, "CMakeLists.txt"),
+                        "include(GNUInstallDirs)",
+                        "project(qualisys_cpp_sdk CXX)")
+
+        replace_in_file(self, join(self.source_folder, "CMakeLists.txt"),
+                        "project(qualisys_cpp_sdk)",
+                        "include(GNUInstallDirs)")
 
     def build(self):
-        cmake = self.configure_cmake()
+        cmake = CMake(self)
+        cmake.configure()
         cmake.build()
 
     def package(self):
-        cmake = self.configure_cmake()
+        cmake = CMake(self)
         cmake.install()
 
-    def source(self):
-        tools.replace_in_file("Network.h",
-                            "#ifdef _WIN32",
-                            '''#ifdef _WIN32
-// BEGIN CONAN PATCH
-#pragma comment(lib, "Ws2_32.lib")
-// END CONAN PATCH''')
-
-
-
     def package_info(self):
-        self.cpp_info.name = 'qualisys_cpp_sdk'
-        lib = "qualisys_cpp_sdk"
+        lib = self.name
         if self.settings.build_type == "Debug":
             lib += "-d"
         self.cpp_info.libs = [lib]
-        self.cpp_info.includedirs.extend(["include/qualisys_cpp_sdk"])
+        self.cpp_info.includedirs.extend([f"include/{self.name}"])
+        if self.settings.os == "Windows":
+            self.cpp_info.system_libs = ["ws2_32"]
