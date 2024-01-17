@@ -1,9 +1,7 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 project(test_package)
 
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-find_package(qualisys_cpp_sdk MODULE REQUIRED)
+find_package(qualisys_cpp_sdk REQUIRED)
 
-add_executable(test test_package.cpp)
-target_link_libraries(test PRIVATE qualisys_cpp_sdk::qualisys_cpp_sdk)
-
+add_executable(test_pkg test_package.cpp)
+target_link_libraries(test_pkg PRIVATE qualisys_cpp_sdk::qualisys_cpp_sdk)
